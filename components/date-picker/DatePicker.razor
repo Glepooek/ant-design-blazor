@@ -10,8 +10,8 @@
                     Disabled="Disabled"
                     PopupContainerSelector="@PopupContainerSelector"
                     OnVisibleChange="visible => { AutoFocus = visible; OnOpenChange.InvokeAsync(visible); }"
-                    OverlayEnterCls="slide-up-enter slide-up-enter-active slide-up"
-                    OverlayLeaveCls="slide-up-leave slide-up-leave-active slide-up"
+                    OverlayEnterCls="ant-slide-up-enter ant-slide-up-enter-active ant-slide-up"
+                    OverlayLeaveCls="ant-slide-up-leave ant-slide-up-leave-active ant-slide-up"
                     Trigger="new TriggerType[] { TriggerType.Click }">
         <Overlay>
             <div class="@(PrefixCls)-panel-container">
@@ -34,6 +34,7 @@
                                  ReadOnly="@InputReadOnly"
                                  AutoFocus="@AutoFocus"
                                  OnClick="async e => { await OnInputClick(); }"
+                                 OnKeyUp="@OnKeyUp"
                                  OnInput="e => OnInput(e, 0)"
                                  ShowTime="@(Picker == DatePickerType.Time)"
                                  OnClickClear="e => ClearValue(0)"
