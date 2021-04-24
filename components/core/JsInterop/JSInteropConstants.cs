@@ -36,6 +36,7 @@ namespace AntDesign
         public static string Log => $"{FUNC_PREFIX}log";
 
         public static string Focus => $"{FUNC_PREFIX}focus";
+        public static string HasFocus => $"{FUNC_PREFIX}hasFocus";
 
         public static string Blur => $"{FUNC_PREFIX}blur";
 
@@ -102,6 +103,10 @@ namespace AntDesign
         public static string RegisterResizeTextArea => $"{FUNC_PREFIX}registerResizeTextArea";
 
         public static string DisposeResizeTextArea => $"{FUNC_PREFIX}disposeResizeTextArea";
+
+        public static string SetDomAttribute => $"{FUNC_PREFIX}setDomAttribute";
+
+        public static string SetSelectionStart => $"{FUNC_PREFIX}setSelectionStart";
 
         #region Draggable Modal
 
