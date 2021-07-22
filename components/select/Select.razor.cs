@@ -262,24 +262,18 @@ namespace AntDesign
             }
         }
 
+        bool _valueHasChanged;
+
         [Parameter]
         public override TItemValue Value
         {
             get => _selectedValue;
             set
             {
-                var hasChanged = !EqualityComparer<TItemValue>.Default.Equals(value, _selectedValue);
-                if (hasChanged)
+                _valueHasChanged = !EqualityComparer<TItemValue>.Default.Equals(value, _selectedValue);
+                if (_valueHasChanged)
                 {
                     _selectedValue = value;
-                    if (_isInitialized)
-                    {
-                        OnValueChange(value);
-                        if (Form?.ValidateOnChange == true)
-                        {
-                            EditContext?.NotifyFieldChanged(FieldIdentifier);
-                        }
-                    }
                 }
             }
         }
@@ -427,6 +421,7 @@ namespace AntDesign
         private IEnumerable<TItemValue> _defaultValues;
         private bool _defaultValuesHasItems;
         private bool _isInitialized;
+        private bool _optionsHasInitialized;
         private bool _defaultValueApplied;
         private bool _defaultActiveFirstOptionApplied;
         private bool _waittingStateChange;
@@ -527,16 +522,34 @@ namespace AntDesign
             base.OnInitialized();
         }
 
-        protected override async Task OnParametersSetAsync()
+        protected override void OnParametersSet()
         {
             if (SelectOptions == null)
+            {
                 CreateDeleteSelectOptions();
+                _optionsHasInitialized = true;
+            }
 
-            await base.OnParametersSetAsync();
+            if (_valueHasChanged && _optionsHasInitialized)
+            {
+                _valueHasChanged = false;
+                OnValueChange(_selectedValue);
+                if (Form?.ValidateOnChange == true)
+                {
+                    EditContext?.NotifyFieldChanged(FieldIdentifier);
+                }
+            }
+
+            base.OnParametersSet();
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
         {
+            if (SelectOptions != null)
+            {
+                _optionsHasInitialized = true;
+            }
+
             if (firstRender)
             {
                 await SetInitialValuesAsync();
@@ -569,7 +582,10 @@ namespace AntDesign
             }
 
             if (_isInitialized && SelectOptions == null)
+            {
                 CreateDeleteSelectOptions();
+                _optionsHasInitialized = true;
+            }
 
             if (_waittingStateChange)
             {
@@ -1306,7 +1322,7 @@ namespace AntDesign
         /// </summary>
         protected override void OnValueChange(TItemValue value)
         {
-            if (!_isInitialized) // This is important because otherwise the initial value is overwritten by the EventCallback of ValueChanged and would be NULL.
+            if (!_optionsHasInitialized) // This is important because otherwise the initial value is overwritten by the EventCallback of ValueChanged and would be NULL.
                 return;
 
             if (!_isValueEnum && EqualityComparer<TItemValue>.Default.Equals(value, default))
