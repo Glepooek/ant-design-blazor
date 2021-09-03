@@ -5,11 +5,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Linq.Expressions;
 using System.Reflection;
-using AntDesign.Core.Reflection;
 using AntDesign.Internal;
 using AntDesign.TableModels;
 using Microsoft.AspNetCore.Components;
-using System.Globalization;
 
 namespace AntDesign
 {
@@ -24,8 +22,6 @@ namespace AntDesign
         [Parameter]
         public Expression<Func<TData>> FieldExpression { get; set; }
 
-        [Parameter]
-        public RenderFragment<TData> CellRender { get; set; }
 
         [Parameter]
         public TData Field
@@ -70,7 +66,7 @@ namespace AntDesign
         public SortDirection DefaultSortOrder { get; set; }
 
         [Parameter]
-        public Func<RowData, Dictionary<string, object>> OnCell { get; set; }
+        public Func<CellData, Dictionary<string, object>> OnCell { get; set; }
 
         [Parameter]
         public Func<Dictionary<string, object>> OnHeaderCell { get; set; }
@@ -194,8 +190,6 @@ namespace AntDesign
                 {
                     SortModel = new SortModel<TData>(GetFieldExpression, FieldName, SorterMultiple, DefaultSortOrder, SorterCompare);
                 }
-
-                Table?.ReloadAndInvokeChange();
             }
             else if (IsBody)
             {
@@ -267,6 +261,8 @@ namespace AntDesign
                         ((List<TableFilter>)_filters).Add(nullFilterOption);
                     }
                 }
+
+                Context.HeaderColumnInitialed(this);
             }
 
             ClassMapper
